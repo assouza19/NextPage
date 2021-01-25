@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Next Page</string>
+    <string name="home_profile">Profile</string>
+    <string name="home_feed">Home</string>
+    <string name="home_search">Search</string>
+    <string name="home_favorite">Favorites</string>
+</resources>

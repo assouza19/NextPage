@@ -1,0 +1,4 @@
+include ':app'
+rootProject.name = "Next Page"
+include ':buildSrcs'
+include ':buildModule'
