@@ -1,6 +1,6 @@
 package com.br.nextpage.domain.models
 
-internal data class Login(
+data class Login(
     val token: Token,
     val url: String
 )

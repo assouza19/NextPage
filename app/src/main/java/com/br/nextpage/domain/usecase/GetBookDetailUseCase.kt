@@ -3,8 +3,9 @@ package com.br.nextpage.domain.usecase
 import com.br.nextpage.domain.models.BookDetail
 import com.br.nextpage.domain.repository.BookRepository
 import com.br.nextpage.domain.repository.UserRepository
+import retrofit2.Response
 
-internal class GetBookDetailUseCase(
+class GetBookDetailUseCase(
     private val repository: BookRepository,
     private val userRepository: UserRepository
 ) {

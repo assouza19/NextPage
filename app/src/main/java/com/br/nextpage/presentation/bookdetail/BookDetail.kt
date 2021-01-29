@@ -1,20 +1,7 @@
 package com.br.nextpage.presentation.bookdetail
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredHeightIn
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
@@ -24,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,23 +19,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.AmbientDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import com.br.nextpage.R
+import com.br.nextpage.domain.models.BookButton
+import com.br.nextpage.domain.models.BookDetail
 import com.br.nextpage.presentation.theme.JetsnackTheme
 import com.br.nextpage.presentation.theme.Neutral8
-import com.br.nextpage.utils.formatPrice
-import com.example.jetsnack.ui.components.JetsnackButton
-import com.example.jetsnack.ui.components.JetsnackDivider
-import com.example.jetsnack.ui.components.JetsnackSurface
-import com.example.jetsnack.ui.components.QuantitySelector
-import com.example.jetsnack.ui.components.SnackCollection
-import com.example.jetsnack.ui.components.SnackImage
+import com.br.nextpage.presentation.viewmodel.BookDetailViewModel
+import com.example.jetsnack.ui.components.*
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import kotlin.math.max
@@ -67,21 +47,24 @@ private val CollapsedImageSize = 150.dp
 private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
 @Composable
-fun SnackDetail(
-    snackId: Long,
+fun BookDetail(
+    bookId: String,
+    viewModel: BookDetailViewModel,
     upPress: () -> Unit
 ) {
-    val snack = remember(snackId) { SnackRepo.getSnack(snackId) }
-    val related = remember(snackId) { SnackRepo.getRelated(snackId) }
+    val book = remember(bookId) {
+        viewModel.getBookDetail(bookId)
+    }
+//    val related = remember(bookId) { SnackRepo.getRelated(bookId) }
 
     Box(Modifier.fillMaxSize()) {
         val scroll = rememberScrollState(0f)
         Header()
-        Body(related, scroll)
-        Title(snack, scroll.value)
-        Image(snack.imageUrl, scroll.value)
+//        Body(related, scroll)
+        Title(book, scroll.value)
+        Image(book.cover.orEmpty(), scroll.value)
         Up(upPress)
-        CartBottomBar(modifier = Modifier.align(Alignment.BottomCenter))
+        CartBottomBar(modifier = Modifier.align(Alignment.BottomCenter), book.buttons)
     }
 }
 
@@ -115,82 +98,82 @@ private fun Up(upPress: () -> Unit) {
     }
 }
 
+//@Composable
+//private fun Body(
+//    related: List<SnackCollection>,
+//    scroll: ScrollState
+//) {
+//    Column {
+//        Spacer(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .statusBarsPadding()
+//                .preferredHeight(MinTitleOffset)
+//        )
+//        ScrollableColumn(scrollState = scroll) {
+//            Spacer(Modifier.preferredHeight(GradientScroll))
+//            JetsnackSurface(Modifier.fillMaxWidth()) {
+//                Column {
+//                    Spacer(Modifier.preferredHeight(ImageOverlap))
+//                    Spacer(Modifier.preferredHeight(TitleHeight))
+//
+//                    Spacer(Modifier.preferredHeight(16.dp))
+//                    Text(
+//                        text = stringResource(R.string.detail_header),
+//                        style = MaterialTheme.typography.overline,
+//                        color = JetsnackTheme.colors.textHelp,
+//                        modifier = HzPadding
+//                    )
+//                    Spacer(Modifier.preferredHeight(4.dp))
+//                    Text(
+//                        text = stringResource(R.string.detail_placeholder),
+//                        style = MaterialTheme.typography.body1,
+//                        color = JetsnackTheme.colors.textHelp,
+//                        modifier = HzPadding
+//                    )
+//
+//                    Spacer(Modifier.preferredHeight(40.dp))
+//                    Text(
+//                        text = stringResource(R.string.ingredients),
+//                        style = MaterialTheme.typography.overline,
+//                        color = JetsnackTheme.colors.textHelp,
+//                        modifier = HzPadding
+//                    )
+//                    Spacer(Modifier.preferredHeight(4.dp))
+//                    Text(
+//                        text = stringResource(R.string.ingredients_list),
+//                        style = MaterialTheme.typography.body1,
+//                        color = JetsnackTheme.colors.textHelp,
+//                        modifier = HzPadding
+//                    )
+//
+//                    Spacer(Modifier.preferredHeight(16.dp))
+//                    JetsnackDivider()
+//
+//                    related.forEach { snackCollection ->
+//                        key(snackCollection.id) {
+//                            SnackCollection(
+//                                snackCollection = snackCollection,
+//                                onSnackClick = { },
+//                                highlight = false
+//                            )
+//                        }
+//                    }
+//
+//                    Spacer(
+//                        modifier = Modifier
+//                            .padding(bottom = BottomBarHeight)
+//                            .navigationBarsPadding(left = false, right = false)
+//                            .preferredHeight(8.dp)
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+
 @Composable
-private fun Body(
-    related: List<SnackCollection>,
-    scroll: ScrollState
-) {
-    Column {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .preferredHeight(MinTitleOffset)
-        )
-        ScrollableColumn(scrollState = scroll) {
-            Spacer(Modifier.preferredHeight(GradientScroll))
-            JetsnackSurface(Modifier.fillMaxWidth()) {
-                Column {
-                    Spacer(Modifier.preferredHeight(ImageOverlap))
-                    Spacer(Modifier.preferredHeight(TitleHeight))
-
-                    Spacer(Modifier.preferredHeight(16.dp))
-                    Text(
-                        text = stringResource(R.string.detail_header),
-                        style = MaterialTheme.typography.overline,
-                        color = JetsnackTheme.colors.textHelp,
-                        modifier = HzPadding
-                    )
-                    Spacer(Modifier.preferredHeight(4.dp))
-                    Text(
-                        text = stringResource(R.string.detail_placeholder),
-                        style = MaterialTheme.typography.body1,
-                        color = JetsnackTheme.colors.textHelp,
-                        modifier = HzPadding
-                    )
-
-                    Spacer(Modifier.preferredHeight(40.dp))
-                    Text(
-                        text = stringResource(R.string.ingredients),
-                        style = MaterialTheme.typography.overline,
-                        color = JetsnackTheme.colors.textHelp,
-                        modifier = HzPadding
-                    )
-                    Spacer(Modifier.preferredHeight(4.dp))
-                    Text(
-                        text = stringResource(R.string.ingredients_list),
-                        style = MaterialTheme.typography.body1,
-                        color = JetsnackTheme.colors.textHelp,
-                        modifier = HzPadding
-                    )
-
-                    Spacer(Modifier.preferredHeight(16.dp))
-                    JetsnackDivider()
-
-                    related.forEach { snackCollection ->
-                        key(snackCollection.id) {
-                            SnackCollection(
-                                snackCollection = snackCollection,
-                                onSnackClick = { },
-                                highlight = false
-                            )
-                        }
-                    }
-
-                    Spacer(
-                        modifier = Modifier
-                            .padding(bottom = BottomBarHeight)
-                            .navigationBarsPadding(left = false, right = false)
-                            .preferredHeight(8.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Title(snack: Snack, scroll: Float) {
+private fun Title(book: BookDetail, scroll: Float) {
     val maxOffset = with(AmbientDensity.current) { MaxTitleOffset.toPx() }
     val minOffset = with(AmbientDensity.current) { MinTitleOffset.toPx() }
     val offset = (maxOffset - scroll).coerceAtLeast(minOffset)
@@ -204,13 +187,13 @@ private fun Title(snack: Snack, scroll: Float) {
     ) {
         Spacer(Modifier.preferredHeight(16.dp))
         Text(
-            text = snack.name,
+            text = book.title.orEmpty(),
             style = MaterialTheme.typography.h4,
             color = JetsnackTheme.colors.textSecondary,
             modifier = HzPadding
         )
         Text(
-            text = snack.tagline,
+            text = book.author.orEmpty(),
             style = MaterialTheme.typography.subtitle2,
             fontSize = 20.sp,
             color = JetsnackTheme.colors.textHelp,
@@ -218,7 +201,7 @@ private fun Title(snack: Snack, scroll: Float) {
         )
         Spacer(Modifier.preferredHeight(4.dp))
         Text(
-            text = formatPrice(snack.price),
+            text = book.author.orEmpty(),
             style = MaterialTheme.typography.h6,
             color = JetsnackTheme.colors.textPrimary,
             modifier = HzPadding
@@ -281,7 +264,7 @@ private fun CollapsingImageLayout(
 }
 
 @Composable
-private fun CartBottomBar(modifier: Modifier = Modifier) {
+private fun CartBottomBar(modifier: Modifier = Modifier, buttons: List<BookButton>?) {
     val (count, updateCount) = remember { mutableStateOf(1) }
     JetsnackSurface(modifier) {
         Column {
@@ -304,33 +287,11 @@ private fun CartBottomBar(modifier: Modifier = Modifier) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = stringResource(R.string.add_to_cart),
+                        text = buttons?.get(0)?.description.orEmpty(),
                         maxLines = 1
                     )
                 }
             }
         }
-    }
-}
-
-@Preview("Snack Detail")
-@Composable
-private fun SnackDetailPreview() {
-    JetsnackTheme {
-        SnackDetail(
-            snackId = 1L,
-            upPress = { }
-        )
-    }
-}
-
-@Preview("Snack Detail • Dark")
-@Composable
-private fun SnackDetailDarkPreview() {
-    JetsnackTheme(darkTheme = true) {
-        SnackDetail(
-            snackId = 1L,
-            upPress = { }
-        )
     }
 }

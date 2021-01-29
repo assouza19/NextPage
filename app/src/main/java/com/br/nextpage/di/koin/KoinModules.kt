@@ -9,12 +9,17 @@ import com.br.nextpage.data.repository.UserRepositoryImpl
 import com.br.nextpage.domain.repository.BookRepository
 import com.br.nextpage.domain.repository.LoginRepository
 import com.br.nextpage.domain.repository.UserRepository
+import com.br.nextpage.domain.usecase.GetBookDetailUseCase
+import com.br.nextpage.domain.usecase.GetBooksUseCase
+import com.br.nextpage.domain.usecase.GetTokenUseCase
+import com.br.nextpage.presentation.viewmodel.BookDetailViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
 //    viewModel { HomeViewModel(get(), Dispatchers.Main, get(), get(), get()) }
 //    viewModel { FavoriteViewModel(Dispatchers.Main, get(), get(), get()) }
-//    viewModel { BookDetailsViewModel() }
+    viewModel { BookDetailViewModel(getBookDetailUseCase = get()) }
 //    viewModel {
 //        LoginViewModel(
 //            repository = get(),
@@ -23,6 +28,18 @@ val appModule = module {
 //            Dispatchers.Main
 //        )
 //    }
+
+    factory {
+        GetBookDetailUseCase(repository = get(), userRepository = get())
+    }
+
+    factory {
+        GetTokenUseCase(userRepository = get())
+    }
+
+    factory {
+        GetBooksUseCase(repository = get(), userRepository = get())
+    }
 
     factory<BookRepository> {
         BookRepositoryImpl(
