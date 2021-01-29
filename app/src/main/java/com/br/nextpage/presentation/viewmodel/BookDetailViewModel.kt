@@ -19,7 +19,7 @@ class BookDetailViewModel(
     val bookDetail: LiveData<BookDetail>
         get() = _bookDetail
 
-    fun getBookDetail(idBook: String) {
+    fun getBookDetail(idBook: String) : BookDetail {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _bookDetail.value = getBookDetailUseCase(idBook)

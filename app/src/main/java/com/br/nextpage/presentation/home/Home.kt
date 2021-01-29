@@ -56,7 +56,7 @@ import com.example.jetsnack.ui.components.JetsnackSurface
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 
 @Composable
-fun Home(onSnackSelected: (Long) -> Unit) {
+fun Home(onSnackSelected: (String) -> Unit) {
     val (currentSection, setCurrentSection) = savedInstanceState { HomeSections.Feed }
     val navItems = HomeSections.values().toList()
     JetsnackScaffold(

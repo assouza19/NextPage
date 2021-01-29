@@ -11,11 +11,11 @@ sealed class Destination : Parcelable {
 
     @Immutable
     @Parcelize
-    data class BookDetail(val bookId: Long) : Destination()
+    data class BookDetail(val bookId: String) : Destination()
 }
 
 class Actions(navigator: Navigator<Destination>) {
-    val selectBook: (Long) -> Unit = { bookId: Long ->
+    val selectBook: (String) -> Unit = { bookId: String ->
         navigator.navigate(Destination.BookDetail(bookId))
     }
     val upPress: () -> Unit = {

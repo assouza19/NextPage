@@ -15,7 +15,7 @@ import dev.chrisbanes.accompanist.insets.statusBarsHeight
 
 @Composable
 fun Feed(
-    onSnackClick: (Long) -> Unit,
+    onSnackClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackCollections = remember { SnackRepo.getSnacks() }
@@ -32,7 +32,7 @@ fun Feed(
 private fun Feed(
     snackCollections: List<SnackCollection>,
     filters: List<Filter>,
-    onSnackClick: (Long) -> Unit,
+    onSnackClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     JetsnackSurface(modifier = modifier.fillMaxSize()) {
